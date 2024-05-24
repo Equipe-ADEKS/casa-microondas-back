@@ -5,13 +5,16 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "nodemon server.js"
   },
   "author": "Emmanuel",
   "license": "ISC",
   "description": "Back-end do projeto Casa-dos-Microondas",
   "dependencies": {
-    "express": "^4.19.2"
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0"
   },
   "keywords": [
     "casa"
