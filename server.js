@@ -5,9 +5,10 @@ import mysql from "mysql2";
 const app = express();
 const porta = 3000;
 const conexao = mysql.createConnection({
-  host:"localhost:3306/CMO",
-  user:"",
-  password:""
+  host:"localhost",
+  port:3306,
+  database: "casa_microondas_login",
+  user:"root"
 });
 
 conexao.connect();
@@ -29,6 +30,12 @@ app.get("/servicos", (req, res) => {
 
 let html = '';
 
+/*app.post ("/Marcas/Marcas.html", (req, res) => {
+  const SQL = "INSERT INTO marcas ()"
+  conexao.query()
+})*/
+
+
 app.get("/marcas", (req, res) => {
   html = `<html>
     <head>
@@ -49,17 +56,22 @@ app.post("/servicos", (req, res) => {
   let tit = req.body.titulo;
   let desc = req.body.desc;
   let url = req.body.url;
+  let img = req.body.img;
+  let ordem = req.body.ordem;
+  let ativo = true;
 
   conexao.query(
-  `INSERT INTO servico (titulo, ds_servico, url-servico)
-  VALUES (:tit,:desc, :url); `) ,  (erro, linhas, campos) => {
-    campos = {tit, desc, url};
-    if(erro) {
-      res.send('problema ao inserir serviço')
-    }
-    else
-     res.send(linhas);
-  };
+    `call sp_ins_servico (@id, ?, ?, ?, ?, ?, ?, @mensagem)`,
+    [tit, desc, img, ordem, url, ativo], (erro, linhas) => {
+      if(erro) {
+        console.log(erro);
+        res.send('Problema ao inserir serviço')
+      }
+      else {
+        console.log(linhas);
+        res.send('Serviço inserido');
+      }
+    });
 });
 
 //Servidor criado com js puro
