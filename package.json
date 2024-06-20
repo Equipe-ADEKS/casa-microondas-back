@@ -1,22 +1,22 @@
 {
-  "name": "cmo_server",
+  "name": "cmo",
   "version": "1.0.0",
-  "main": "server.js",
+  "description": "Consertamos microondas em 30 minutos",
   "type": "module",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js"
   },
   "author": "Emmanuel",
   "license": "ISC",
-  "description": "Back-end do projeto Casa-dos-Microondas",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "express": "^4.19.2",
-    "mysql2": "^3.9.7",
-    "nodemon": "^3.1.0"
-  },
-  "keywords": [
-    "casa"
-  ]
+    "jsonwebtoken": "^9.0.2",
+    "mssql": "^10.0.4",
+    "mysql2": "^3.10.0",
+    "nodemon": "^3.1.3"
+  }
 }
