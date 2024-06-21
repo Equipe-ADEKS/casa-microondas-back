@@ -55,7 +55,7 @@ app.get("/", (req, resp) => {
 
 let html = '';
 
-app.get("/marcas", (req, resp) => {
+/*app.get("/marcas", (req, resp) => {
     html = `
         <html>
             <head>
@@ -69,18 +69,18 @@ app.get("/marcas", (req, resp) => {
     resp.status(200).send(html
 
     );
-});
+});*/
 
 
 
-app.get("/modelos", (req, resp) => {
+/*app.get("/modelos", (req, resp) => {
     resp.status(200).send("Rota para trazer os modelos");
 });
 
 app.get("/cadastro", (req, resp) => {
     resp.status(200).send("Rota para cadastro");
 });
-
+*/
 
 
 // middleware
@@ -113,34 +113,48 @@ app.post("/login", (req, res) => {
     res.status(504).send("Usuário inválido ou inexitente");
 });
 
-// Rota para inclusão de novos serviços
-
-// Rota para inclusão de novas marcas
-
-/*app.post("/marcas", (req, resp) => {
-    let descricao = req.body.descricao;
-    let url = req.body.url;
-    let logo = req.body.logo;
-    let flag = true;
-
-    conexao.query(
-        `CALL SP_Ins_Marca(?, ?, ?, ?, @id, @mensagem)`,
-        [descricao, url, logo, flag], (erro, linha) => {
-            if (erro) {
-                console.log(erro);
-                resp.send('problema ao inserir marca');
-            }
-            else {
-                console.log(linha);
-                resp.send('Marca inserida!');
-            }
-
-        });
-
-});*/
 
 // Rota para inclusão de novos tipos produto
 
+
+app.get("/Marca/:id_marca", (req, res) => {
+    let id_marca = req.params.id_marca;
+  
+      conexao.query(`SELECT id_marca,
+          desc_marca,
+          ativo
+      FROM Marca WHERE id_marca = ${id_marca}`)
+          .then(resut => res.json(resut.recordset))
+          .catch(err =>res.json(err));
+        
+     
+});
+
+app.get("/marca", (req, resp) => {
+    let desc_marca = req.body.desc_marca;
+    let logo_marca = req.body.logo_marca;
+    let url_marca = req.body.URL_marca;
+
+     conexao.query(`SELECT id_marca,
+        desc_marca,
+        ativo
+    FROM Marca WHERE ativo = 1`)
+        .then(resut => resp.json(resut.recordset))
+        .catch(err => resp.json(err));
+
+
+});
+
+app.get("/Marca", (req, res) => {
+    conexao.query(`SELECT id_marca
+                    desc_marca
+                   logo_marca
+                    url_marca
+                    ativo,
+                FROM Marca WHERE ativo = 1 `)
+        .then(resut => res.json(resut.recordset))
+        .catch(err => res.json(err))
+});
 
 // GET PARA O SITE 
 app.get("/tipoProduto", (req, resp) => {
@@ -158,6 +172,7 @@ app.get("/tipoProduto", (req, resp) => {
 
 });
 
+// GET PARA O FORMULARIO
 app.get("/tipoProduto/:id_tipo", (req, res) => {
     let id_tipo = req.params.id_tipo;
 
@@ -172,24 +187,62 @@ app.get("/tipoProduto/:id_tipo", (req, res) => {
 
 });
 
+
+
 app.post("/tipoProduto", (req, res) => {
 
-    let desc = req.body.desc_tipo;
+    let desc_tipo = req.body.desc_tipo;
     let ativo = '1';
 
-    conexao.query(`exec SP_Ins_TipoProduto( '${desc}')`, (erro, res) => {
+    conexao.query(`exec SP_Ins_TipoProduto '${desc_tipo}'`, (erro, resultado) => {
         if (erro) {
             console.log(erro);
             res.status(500).send('Problema ao atualizar o Tipo de Produto');
         } else {
-            console.log(resultado);
-            res.status(200).send('Tipo de produto  atualizado com sucesso');
+            console.log(resultado.recordset);
+            res.status(200).send('Tipo de produto atualizado com sucesso');
         }
 
     });
 
 });
 
+
+app.put("/tipoProduto", (req, res) => {
+
+    let id = req.body.id;
+    let desc_tipo = req.body.desc_tipo;
+    let ativo = req.body.ativo;
+
+    conexao.query(`exec SP_Upd_TipoProduto 
+        '${id}', '${desc_tipo}', '${ativo}' `, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao atualizar o Tipo de Produto');
+        } else {
+            console.log(resultado);
+            res.status(200).send('Tipo de Produto atualizado com sucesso');
+        }
+    });
+});
+
+app.post("/tipoProduto", (req, res) => {
+
+    let desc_tipo = req.body.desc_tipo;
+    let ativo = '1';
+
+    conexao.query(`exec SP_Ins_TipoProduto '${desc_tipo}'`, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao atualizar o Tipo de Produto');
+        } else {
+            console.log(resultado.recordset);
+            res.status(200).send('Tipo de produto atualizado com sucesso');
+        }
+
+    });
+
+});
 
 
 
@@ -268,7 +321,7 @@ app.get("/servicos", (req, resp) => {
 });
 
 // GET PARA O ADMINISTRADOR
-app.get("/admservico", (req, res) => {
+app.get("/servico", (req, res) => {
     conexao.query(`SELECT id_servico
                     titulo_servico
                     desc_servico
@@ -277,7 +330,7 @@ app.get("/admservico", (req, res) => {
                     ativo
                 FROM servico 
                 ORDEM BY ORDEM_APRESENTACAO`)
-        .then(resut => res.json(result.recordset))
+        .then(resut => res.json(resut.recordset))
         .catch(err => res.json(err))
 });
 
@@ -297,21 +350,22 @@ app.delete('/servicos/:id', (req, res) => {
     });
 });
 
+app.delete('/tipoProduto/:id', (req, res) => {
 
-/*import http from "http";
- Servisor criado com js puro
-const rotas = {
-    "/": "servidor criado com Node.js para a disciplina WEB Front-End",
-    "/servicos": "Todos os servicos executados pela CMO",
-    "/marcas": "Apresentacao de todas as marcas representadas pela empresa"
-};
+    let id = req.params.id;
+    let ativo = "1";
 
-// arrow function
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { "content-type": "text/plain" });
-    res.end(rotas[req.url])
+    conexao.query(`exec SP_Del_TipoProduto '${id}', ${ativo}`, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao excluir o Tipo de Produto');
+        } else {
+            console.log(resultado);
+            res.status(200).send('Tipo de Produto excluido com sucesso');
+        }
+    });
 });
 
-server.listen(3000,() => {
-    console.log("servidor escutando porta 3000")
-})*/
+
+
+
