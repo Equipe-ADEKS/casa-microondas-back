@@ -181,6 +181,7 @@ app.put("/marca", (req, res) => {
 
 });
 
+// CRUD MARCA COMPLETA 
 app.post("/marca", (req, res) => {
     let desc = req.body.desc_marca;
     let logo = req.body.logo_marca;
