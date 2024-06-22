@@ -119,15 +119,15 @@ app.post("/login", (req, res) => {
 
 app.get("/Marca/:id_marca", (req, res) => {
     let id_marca = req.params.id_marca;
-  
-      conexao.query(`SELECT id_marca,
+
+    conexao.query(`SELECT id_marca,
           desc_marca,
           ativo
       FROM Marca WHERE id_marca = ${id_marca}`)
-          .then(resut => res.json(resut.recordset))
-          .catch(err =>res.json(err));
-        
-     
+        .then(resut => res.json(resut.recordset))
+        .catch(err => res.json(err));
+
+
 });
 
 app.get("/marca", (req, resp) => {
@@ -135,7 +135,7 @@ app.get("/marca", (req, resp) => {
     let logo_marca = req.body.logo_marca;
     let url_marca = req.body.URL_marca;
 
-     conexao.query(`SELECT id_marca,
+    conexao.query(`SELECT id_marca,
         desc_marca,
         ativo
     FROM Marca WHERE ativo = 1`)
@@ -155,6 +155,72 @@ app.get("/Marca", (req, res) => {
         .then(resut => res.json(resut.recordset))
         .catch(err => res.json(err))
 });
+
+
+
+app.put("/marca", (req, res) => {
+    let id = req.body.id_marca;
+    let desc = req.body.desc_marca;
+    let logo = req.body.logo_marca;
+    let url = req.body.url_marca;
+    let ativo = req.body.ativo;
+
+
+    conexao.query(`exec SP_Upd_Marca ${id}, '${desc}','${logo}', 
+        '${url}',${ativo}`, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao atualizar a Marca');
+        } else {
+            console.log(resultado.recordset);
+            res.status(200).send('Marca atualizada com sucesso');
+        }
+       
+
+    });
+
+});
+
+app.post("/marca", (req, res) => {
+    let desc = req.body.desc_marca;
+    let logo = req.body.logo_marca;
+    let url = req.body.url_marca;
+ 
+
+
+    conexao.query(`exec SP_Ins_Marca '${desc}','${logo}', 
+        '${url}'`, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao atualizar a Marca');
+        } else {
+            console.log(resultado.recordset);
+            res.status(200).send('Marca atualizada com sucesso');
+        }
+       
+
+    });
+
+});
+
+app.delete('/marca/:id', (req, res) => {
+
+    let id = req.params.id;
+
+    conexao.query(`exec SP_Del_Marca '${id}'`, (erro, resultado) => {
+        if (erro) {
+            console.log(erro);
+            res.status(500).send('Problema ao excluir o serviço');
+        } else {
+            console.log(resultado);
+            res.status(200).send('Servico excluido com sucesso');
+        }
+    });
+});
+
+
+
+
 
 // GET PARA O SITE 
 app.get("/tipoProduto", (req, resp) => {
