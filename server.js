@@ -434,5 +434,54 @@ app.delete('/tipoProduto/:id', (req, res) => {
 });
 
 
+app.post("/Chamado", (req, res) => {
+
+     let cliente = req.body.cliente;
+     let fone = req.body.fone;
+     let email = req.body.email;
+     let tipoProd = req.body.tipoProd;
+     let produto = req.body.produto;
+     let marca = req.body.marca;
+     let problema = req.body.problema;
+     let tipoCham = req.body.tipoCham;
+ 
+     
+ 
+     conexao.query(`exec SP_Ins_Chamado 
+         '${cliente}', '${fone}', '${email}', 
+        '${tipoProd}', '${produto}', '${marca}', 
+        '${problema}', '${tipoCham}'`, (erro, resultado) => {
+         if (erro) {
+             console.log(erro);
+             res.status(500).send('Problema ao inserir o chamado');
+         } else {
+             console.log(resultado);
+             res.status(200).send('Chamado inserido com sucesso');
+         }
+     });
+ });
+
+/*app.get("/chamados", (req, resp) => {
+
+    conexao.query(`SELECT id_chamado,
+        id_cliente,
+        desc_chamado,
+        tipo_equipamento,
+        equipamento,
+        marca,
+        status_chamado,
+        dt_chamado
+    FROM Chamado`)
+    .then(result => {
+        resp.status(200).json(result.recordset);
+    })
+    .catch(err => {
+        resp.status(500).json({ error: err.message });
+    });
+});*/
+
+
+
+
 
 
